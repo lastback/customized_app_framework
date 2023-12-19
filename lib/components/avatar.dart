@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class Avatar extends StatefulWidget {
   final String uri;
   final double width;
   final double height;
-  final Decoration decoration;
-  final bool withFrame;
+  final BoxDecoration decoration;
+  final BoxDecoration? frameDecoration;
   final String? defaultAvatar;
 
   const Avatar({
@@ -15,7 +14,7 @@ class Avatar extends StatefulWidget {
     required this.width,
     required this.height,
     this.decoration = const BoxDecoration(shape: BoxShape.circle),
-    this.withFrame = true,
+    this.frameDecoration,
     this.defaultAvatar,
   });
 
@@ -48,17 +47,15 @@ class AvatarState extends State<Avatar> {
                   },
                 )
               : Image(
+                  fit: BoxFit.cover,
                   image: AssetImage(
                       widget.defaultAvatar ?? "assets/common/avatar.png"),
                 ),
-          widget.withFrame
+          widget.frameDecoration != null
               ? Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular((widget.width / 2).w),
-                    border: Border.all(color: Colors.white, width: 2.w),
-                  ),
+                  decoration: widget.frameDecoration,
                 )
-              : Container(),
+              : const SizedBox.shrink(),
         ],
       ),
     );
