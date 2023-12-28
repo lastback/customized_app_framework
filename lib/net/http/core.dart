@@ -81,6 +81,7 @@ abstract class HttpCore {
     dio.interceptors.add(PrettyDioLogger(
       printTag: logTag,
       requestHeader: true,
+      requestBody: true,
       logPrint: logIt,
     ));
   }

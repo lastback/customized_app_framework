@@ -77,10 +77,14 @@ class PrettyDioLogger extends Interceptor {
       requestHeaders['connectTimeout'] = options.connectTimeout?.toString();
       requestHeaders['receiveTimeout'] = options.receiveTimeout?.toString();
 
-      logText += '$requestHeaders\n└ ';
-
+      logText += '$requestHeaders\n';
       // _printMapAsTable(requestHeaders, header: 'Headers');
       // _printMapAsTable(options.extra, header: 'Extras');
+
+      if (requestBody && options.method != 'GET') {
+        final dynamic data = options.data;
+        logText += '\n  Query body = $data \n└ ';
+      }
     }
 
     logPrint(logText);
@@ -150,7 +154,7 @@ class PrettyDioLogger extends Interceptor {
     // }
 
     if (responseBody) {
-      logText += '  Data = $response\n└';
+      logText += '\n  Response = $response\n└';
       // logPrint('╔ Body');
       // _printResponse(response);
       // logPrint('╚');
