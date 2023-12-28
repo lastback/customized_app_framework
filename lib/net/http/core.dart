@@ -10,6 +10,13 @@ import 'printer.dart';
 import 'env.dart';
 
 abstract class HttpCore {
+  /// 网络状态变化回调
+  ///
+  /// ***
+  /// [HttpCore]
+  /// ***
+  void Function(EnumHttpState s)? statusCallback;
+
   /// 请求服务器地址
   /// ***
   /// [HttpCore]
@@ -42,6 +49,13 @@ abstract class HttpCore {
   /// 当前请求的状态
   EnumHttpState get state => _state;
 
+  set state(EnumHttpState s) {
+    _state = s;
+    if (statusCallback is Function && statusCallback != null) {
+      statusCallback!(_state);
+    }
+  }
+
   String get logTag => '';
 
   @protected
@@ -62,6 +76,7 @@ abstract class HttpCore {
     required this.path,
     this.timeout = const Duration(seconds: 3),
     this.headers,
+    this.statusCallback,
   }) {
     dio.interceptors.add(PrettyDioLogger(
       printTag: logTag,
@@ -92,11 +107,11 @@ abstract class HttpCore {
   /// - queryParameters `Map<String, dynamic>` 请求参数
   Future<dynamic> apply({Map<String, dynamic>? queryParameters}) async {
     try {
-      if (_state == EnumHttpState.busy) {
+      if (state == EnumHttpState.busy) {
         logger.w('state = $_state');
         return null;
       } else {
-        _state = EnumHttpState.busy;
+        state = EnumHttpState.busy;
 
         final Response response = method == HttpMethod.kGet
             ? await dio.get(
@@ -105,18 +120,19 @@ abstract class HttpCore {
               )
             : await dio.post(
                 path,
-                queryParameters: queryParameters,
+                data: queryParameters,
               );
+
         var data = processResponse(response: response);
 
-        _state = EnumHttpState.success;
+        state = EnumHttpState.success;
         return data;
       }
     } on TimeoutException {
-      _state = EnumHttpState.timeout;
+      state = EnumHttpState.timeout;
       rethrow;
     } catch (e) {
-      _state = EnumHttpState.fail;
+      state = EnumHttpState.fail;
       rethrow;
     }
   }

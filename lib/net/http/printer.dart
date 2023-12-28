@@ -62,7 +62,8 @@ class PrettyDioLogger extends Interceptor {
     String logText = '';
     if (request) {
       // _printRequestHeader(options);
-      logText += '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  Request ║ ${options.method} ║ ${options.uri.toString()}\n';
+      logText +=
+          '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  Request ║ ${options.method} ║ ${options.uri.toString()}\n';
     }
     if (requestHeader) {
       logText += '\n  Query Parameters = ';
@@ -109,9 +110,11 @@ class PrettyDioLogger extends Interceptor {
       final uri = err.requestOptions.uri;
 
       if (err.type != DioExceptionType.badResponse) {
-        logText += '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  DioError ║ ${err.requestOptions.method} ║ ${uri.toString()}\n';
+        logText +=
+            '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  DioError ║ ${err.requestOptions.method} ║ ${uri.toString()}\n';
         // _printBoxed(header: 'DioError ║ Status: ${err.response?.statusCode} ${err.response?.statusMessage}', text: uri.toString());
-        logText += '  status = ${err.response?.statusCode}\n  message = ${err.response?.statusMessage}\n';
+        logText +=
+            '  status = ${err.response?.statusCode}\n  message = ${err.response?.statusMessage}\n';
         if (err.response != null && err.response?.data != null) {
           // logPrint('╔ ${err.type.toString()}');
           // _printResponse(err.response!);
@@ -123,7 +126,8 @@ class PrettyDioLogger extends Interceptor {
         // logPrint('');
         logPrint(logText);
       } else {
-        logText += '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  DioError ║ ${err.requestOptions.method} ║ ${uri.toString()}\n';
+        logText +=
+            '\n┌ [${printTag.toUpperCase()}] ${DateTime.now()}\n  DioError ║ ${err.requestOptions.method} ║ ${uri.toString()}\n';
         logText += '  type = ${err.type}\n  message = ${err.message}\n└ ';
         logPrint(logText);
         // _printBoxed(header: 'DioError ║ ${err.type}', text: err.message);
@@ -146,7 +150,7 @@ class PrettyDioLogger extends Interceptor {
     // }
 
     if (responseBody) {
-      logText += '  Body = $response\n└';
+      logText += '  Data = $response\n└';
       // logPrint('╔ Body');
       // _printResponse(response);
       // logPrint('╚');
@@ -163,7 +167,8 @@ class PrettyDioLogger extends Interceptor {
     // logPrint('$text');
     // logPrint('╚');
 
-    logPrint('[${printTag.toUpperCase()}] ${DateTime.now()}\n╔ $header\n$text\n╚');
+    logPrint(
+        '[${printTag.toUpperCase()}] ${DateTime.now()}\n╔ $header\n$text\n╚');
   }
 
   void _printResponse(Response response) {
@@ -188,7 +193,10 @@ class PrettyDioLogger extends Interceptor {
   void _printResponseHeader(Response response) {
     final uri = response.requestOptions.uri;
     final method = response.requestOptions.method;
-    _printBoxed(header: 'Response ║ $method ║ Status: ${response.statusCode} ${response.statusMessage}', text: uri.toString());
+    _printBoxed(
+        header:
+            'Response ║ $method ║ Status: ${response.statusCode} ${response.statusMessage}',
+        text: uri.toString());
   }
 
   void _printRequestHeader(RequestOptions options) {
@@ -197,7 +205,8 @@ class PrettyDioLogger extends Interceptor {
     _printBoxed(header: 'Request ║ $method', text: uri.toString());
   }
 
-  void _printLine([String pre = '', String suf = '╝']) => logPrint('$pre${'═' * maxWidth}$suf');
+  void _printLine([String pre = '', String suf = '╝']) =>
+      logPrint('$pre${'═' * maxWidth}$suf');
 
   void _printKV(String? key, Object? v) {
     final pre = '╟ $key: ';
@@ -214,7 +223,9 @@ class PrettyDioLogger extends Interceptor {
   void _printBlock(String msg) {
     final lines = (msg.length / maxWidth).ceil();
     for (var i = 0; i < lines; ++i) {
-      logPrint((i >= 0 ? '' : '') + msg.substring(i * maxWidth, math.min<int>(i * maxWidth + maxWidth, msg.length)));
+      logPrint((i >= 0 ? '' : '') +
+          msg.substring(i * maxWidth,
+              math.min<int>(i * maxWidth + maxWidth, msg.length)));
     }
   }
 
@@ -261,7 +272,8 @@ class PrettyDioLogger extends Interceptor {
         if (msg.length + indent.length > linWidth) {
           final lines = (msg.length / linWidth).ceil();
           for (var i = 0; i < lines; ++i) {
-            logPrint('║${_indent(tabs)} ${msg.substring(i * linWidth, math.min<int>(i * linWidth + linWidth, msg.length))}');
+            logPrint(
+                '║${_indent(tabs)} ${msg.substring(i * linWidth, math.min<int>(i * linWidth + linWidth, msg.length))}');
           }
         } else {
           logPrint('║${_indent(tabs)} $key: $msg${!isLast ? ',' : ''}');
@@ -279,7 +291,8 @@ class PrettyDioLogger extends Interceptor {
         if (compact && _canFlattenMap(e)) {
           logPrint('║${_indent(tabs)}  $e${!isLast ? ',' : ''}');
         } else {
-          _printPrettyMap(e, initialTab: tabs + 1, isListItem: true, isLast: isLast);
+          _printPrettyMap(e,
+              initialTab: tabs + 1, isListItem: true, isLast: isLast);
         }
       } else {
         logPrint('║${_indent(tabs + 2)} $e${isLast ? '' : ','}');
@@ -291,7 +304,8 @@ class PrettyDioLogger extends Interceptor {
     var chunks = [];
     for (var i = 0; i < list.length; i += chunkSize) {
       chunks.add(
-        list.sublist(i, i + chunkSize > list.length ? list.length : i + chunkSize),
+        list.sublist(
+            i, i + chunkSize > list.length ? list.length : i + chunkSize),
       );
     }
     for (var element in chunks) {
@@ -300,7 +314,10 @@ class PrettyDioLogger extends Interceptor {
   }
 
   bool _canFlattenMap(Map map) {
-    return map.values.where((dynamic val) => val is Map || val is List).isEmpty && map.toString().length < maxWidth;
+    return map.values
+            .where((dynamic val) => val is Map || val is List)
+            .isEmpty &&
+        map.toString().length < maxWidth;
   }
 
   bool _canFlattenList(List list) {
@@ -310,7 +327,8 @@ class PrettyDioLogger extends Interceptor {
   void _printMapAsTable(Map? map, {String? header}) {
     if (map == null || map.isEmpty) return;
     logPrint('╔ $header ');
-    map.forEach((dynamic key, dynamic value) => _printKV(key.toString(), value));
+    map.forEach(
+        (dynamic key, dynamic value) => _printKV(key.toString(), value));
     _printLine('╚');
   }
 }
