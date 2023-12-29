@@ -18,7 +18,7 @@ abstract class SocketCore {
   late final logger = CustomizedLogger(printTag: logTag);
 
   @protected
-  connect({
+  open({
     required Uri uri,
     Iterable<String>? protocols,
     Duration? pingInterval,
@@ -28,35 +28,43 @@ abstract class SocketCore {
   }) async {
     logger.i('uri = $uri');
     if (client == null) {
-      client = WebSocket(uri);
+      client = WebSocket(
+        uri,
+        pingInterval: pingInterval,
+        backoff: backoff,
+        timeout: timeout,
+        binaryType: binaryType,
+      );
 
       // Listen for changes in the connection state.
-      client?.connection.listen(onConnection);
+      client?.connection.listen(onConnectionState);
 
       // Listen for incoming messages.
-      client?.messages.listen(onMessage);
+      client?.messages.listen(onIncomings);
     } else {
       throw 'client = $client connection state = ${client?.connection.state}';
     }
   }
 
   @protected
-  disconnect({int? code, String? reason}) async {
+  close({int? code, String? reason}) async {
     client?.close(code, reason);
   }
 
+  /// 连接状态变化
   @protected
-  onConnection(ConnectionState state) async {
+  onConnectionState(ConnectionState state) async {
     logger.i('connection state = $state');
+
     if (state is Connected) {
     } else if (state is Disconnected) {
       client = null;
       logger.i('disconnect code = ${state.code}');
-    }
+    } else if (state is Reconnecting) {}
   }
 
   @protected
-  onMessage(message) async {
+  onIncomings(message) async {
     logger.i('incoming = $message');
   }
 
